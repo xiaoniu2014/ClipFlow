@@ -1,0 +1,46 @@
+{
+  "project": {
+    "name": "批量视频生成项目",
+    "version": "1.0.0"
+  },
+  "clips": [
+    {
+      "source_dir": "素材/A",
+      "min_duration": 2,
+      "max_duration": 10,
+      "duration": 10
+    },
+    {
+      "source_dir": "素材/B",
+      "min_duration": 3,
+      "max_duration": 8,
+      "duration": 8
+    },
+    {
+      "source_dir": "素材/C",
+      "min_duration": 2,
+      "max_duration": 6,
+      "duration": 6
+    }
+  ],
+  "speed": {
+    "factor": 1.0,
+    "random_range": [0.9, 1.1]
+  },
+  "video": {
+    "resolution": [1080, 1920],
+    "fps": 30
+  },
+  "output": {
+    "batch_dir": "output/batches",
+    "metadata_dir": "output/metadata",
+    "log_file": "output/batch_generator.log"
+  },
+  "generation": {
+    "count": 100,
+    "workers": 4,
+    "seed": null,
+    "max_retries": 3,
+    "retry_delay": 2.0
+  }
+}
