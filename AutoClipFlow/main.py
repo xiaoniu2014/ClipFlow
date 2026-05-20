@@ -65,8 +65,18 @@ def main():
     builder = FFmpegBuilder(config, segments)
     output_path = builder.build().execute()
 
-    console.print(f"\n[green bold]✓ 视频生成完成![/green bold]")
-    console.print(f"  输出路径: {output_path}")
+    batch_count = config['output'].get('batch_count', 1)
+    if batch_count > 1:
+        console.print(f"[cyan]开始批量生成 {batch_count} 个视频...[/cyan]")
+        batch_gen = BatchGenerator(config)
+        outputs = batch_gen.run()
+        console.print(f"\n[green bold]✓ 批量生成完成![/green bold]")
+        console.print(f"  输出路径: {output_path}")
+        for out in outputs:
+            console.print(f"  - {out}")
+    else:
+        console.print(f"\n[green bold]✓ 视频生成完成![/green bold]")
+        console.print(f"  输出路径: {output_path}")
 
 
 if __name__ == "__main__":
