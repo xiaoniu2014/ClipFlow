@@ -45,8 +45,13 @@ class VideoSelector:
         max_dur = clip_config.get('max_duration', 8)
         target_duration = clip_config.get('end', 0) - clip_config.get('start', 0)
 
+        if not source_dir.exists():
+            print(f"⚠️  警告: 素材目录不存在: {source_dir}")
+            return []
+
         valid_videos = self.get_valid_videos(source_dir, min_dur, max_dur)
         if not valid_videos:
+            print(f"⚠️  警告: 目录 '{source_dir}' 中没有找到符合时长要求({min_dur}~{max_dur}秒)的视频")
             return []
 
         clips = []

@@ -16,29 +16,78 @@
   },
   "clips": [
     {
-      "source_dir": "clips/1",
+      "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/1安装纱窗",
       "min_duration": 0,
       "max_duration": 2,
-      "start": 0.0, 
-      "end": 5.03
+      "start": 0.0,
+      "end": 5.100
     },
     {
-      "source_dir": "clips/2",
+      "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/2展示磁条吸附效果",
       "min_duration": 0.5,
       "max_duration": 2,
-      "start": 5.03, 
-      "end": 6.12
+      "start": 5.100,
+      "end": 6.400
     },
     {
-      "source_dir": "clips/3",
+      "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/1安装纱窗",
       "min_duration": 0.5,
       "max_duration": 2,
-      "start": 6.12, 
-      "end": 8.0
+      "start": 6.400,
+      "end": 8.033
+    },
+    {
+      "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/3网孔细密蚊虫飞不进来",
+      "min_duration": 0.5,
+      "max_duration": 2,
+      "start": 8.033,
+      "end": 10.933
+    },
+    {
+      "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/6吸力强劲",
+      "min_duration": 0.5,
+      "max_duration": 2,
+      "start": 10.933,
+      "end": 13.333
+    },
+    {
+      "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/4水冲不掉",
+      "min_duration": 0.5,
+      "max_duration": 2,
+      "start": 13.333,
+      "end": 14.900
+    },
+    {
+      "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/5开关窗方便",
+      "min_duration": 0.5,
+      "max_duration": 2,
+      "start": 14.900,
+      "end": 17.933
+    },
+    {
+      "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/方便清洗",
+      "min_duration": 0.5,
+      "max_duration": 2,
+      "start": 17.933,
+      "end": 20.033
+    },
+    {
+      "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/方便收纳",
+      "min_duration": 0.5,
+      "max_duration": 2,
+      "start": 20.033,
+      "end": 23.433
+    },
+    {
+      "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/1安装纱窗",
+      "min_duration": 0.5,
+      "max_duration": 2,
+      "start": 23.433,
+      "end": 26.367
     }
   ],
   "output": {
-    "duration": 8,
+    "duration": 26.367,
     "filename": "output/final.mp4",
     "batch_prefix": "batch_",
     "batch_count": 1
