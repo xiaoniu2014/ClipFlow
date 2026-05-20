@@ -38,8 +38,13 @@ class VideoSelector:
                 continue
         return valid
 
-    def build_segment(self, clip_config: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """为一个段落（A/B/C）挑选足够的视频片段"""
+    def build_segment(self, clip_config: Dict[str, Any], used_videos: set) -> List[Dict[str, Any]]:
+        """为一个段落（A/B/C）挑选足够的视频片段
+
+        Args:
+            clip_config: 段落配置
+            used_videos: 当前已使用的视频集合（跨段落共享）
+        """
         source_dir = Path(clip_config['source_dir'])
         min_dur = clip_config.get('min_duration', 3)
         max_dur = clip_config.get('max_duration', 8)
@@ -58,16 +63,26 @@ class VideoSelector:
         accumulated = 0.0
 
         while accumulated < target_duration:
-            video = random.choice(valid_videos)
+            # Filter out videos that have already been used in this batch
+            available = [v for v in valid_videos if v not in used_videos]
+            if not available:
+                print(f"⚠️  警告: 目录 '{source_dir}' 中可用视频不足（所有视频已在当前批次中使用）")
+                break
+
+            video = random.choice(available)
+            used_videos.add(video)
             dur = self.get_video_duration(video)
 
             remaining = target_duration - accumulated
+            # Skip if remaining duration is too small (floating point precision issue)
+            if remaining < 0.05:
+                break
+
             if dur > remaining:
-                # 取部分片段
-                clips.append({'path': video, 'start': 0, 'duration': remaining})
+                clips.append({'path': video, 'start': 0, 'duration': round(remaining, 3)})
                 accumulated = target_duration
             else:
-                clips.append({'path': video, 'start': 0, 'duration': dur})
+                clips.append({'path': video, 'start': 0, 'duration': round(dur, 3)})
                 accumulated += dur
 
         return clips
@@ -76,9 +91,10 @@ class VideoSelector:
         """构建所有段落（A、B、C）并拼接"""
         all_clips = []
         global_start = 0.0
+        used_videos = set()  # Track used videos across all segments in this batch
 
         for clip_config in self.config['clips']:
-            segment_clips = self.build_segment(clip_config)
+            segment_clips = self.build_segment(clip_config, used_videos)
             target_duration = clip_config.get('end', 0) - clip_config.get('start', 0)
 
             # 计算该段落在全局时间线上的起始位置
