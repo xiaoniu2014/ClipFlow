@@ -1,3 +1,6 @@
+第五阶段：生成 ffmpeg filter_complex（核心）
+
+
 请帮我根据 clips plan 动态生成 ffmpeg filter_complex。
 
 目标：
