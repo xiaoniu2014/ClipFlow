@@ -1,0 +1,52 @@
+{
+  "project": {
+    "name": "AutoClipFlow",
+    "version": "1.0.0"
+  },
+  "video": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "codec": "h264_videotoolbox",
+    "bitrate": "8M"
+  },
+  "speed": {
+    "factor": 1.0,
+    "audio_speed": 1.0
+  },
+  "clips": [
+    {
+      "source_dir": "clips/1",
+      "min_duration": 0,
+      "max_duration": 2,
+      "start": 0.0, 
+      "end": 5.03
+    },
+    {
+      "source_dir": "clips/2",
+      "min_duration": 0.5,
+      "max_duration": 2,
+      "start": 5.03, 
+      "end": 6.12
+    },
+    {
+      "source_dir": "clips/3",
+      "min_duration": 0.5,
+      "max_duration": 2,
+      "start": 6.12, 
+      "end": 8.0
+    }
+  ],
+  "output": {
+    "duration": 8,
+    "filename": "output/final.mp4",
+    "batch_prefix": "batch_",
+    "batch_count": 1
+  },
+  "filters": {
+    "scale": "1080:1920",
+    "fps": "30",
+    "色彩": "hue=s=1.02",
+    "对比度": "eq=contrast=1.05"
+  }
+}
