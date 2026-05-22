@@ -26,10 +26,12 @@ class FFmpegBuilder:
         for i, seg in enumerate(self.segments):
             clip_start = seg.get('clip_start', 0)
             clip_duration = seg['duration']
+            clip_speed = seg.get('speed', 1.0)
+            effective_speed = self.speed_factor * clip_speed
             inputs.extend(['-ss', str(clip_start), '-i', str(seg['path'])])
 
             filter_parts.append(
-                f"[{i}:v]trim=0:{clip_duration},setpts=PTS/{self.speed_factor},"
+                f"[{i}:v]trim=0:{clip_duration},setpts=PTS/{effective_speed},"
                 f"scale={self.config['video']['width']}:{self.config['video']['height']},"
                 f"fps={self.config['video']['fps']}[v{i}]"
             )
