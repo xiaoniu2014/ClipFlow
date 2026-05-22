@@ -9,10 +9,36 @@ from pathlib import Path
 from typing import List, Dict, Any
 
 
+class VideoPool:
+    """视频池，按顺序均匀使用视频素材"""
+
+    def __init__(self, videos: List[Path]):
+        self.videos = videos
+        self.index = 0
+        if videos:
+            random.shuffle(self.videos)
+
+    def get_next(self) -> Path:
+        """获取下一个视频（循环）"""
+        if not self.videos:
+            return None
+        video = self.videos[self.index]
+        self.index = (self.index + 1) % len(self.videos)
+        # 当转回起点时，重新洗牌
+        if self.index == 0:
+            random.shuffle(self.videos)
+        return video
+
+    def __len__(self):
+        return len(self.videos)
+
+
 class VideoSelector:
     def __init__(self, config: Dict[str, Any]):
         self.config = config
         self.segments: List[Dict[str, Any]] = []
+        # 每个source_dir维护一个独立的视频池
+        self.pools: Dict[str, VideoPool] = {}
 
     def get_video_duration(self, video_path: Path) -> float:
         cmd = [
@@ -25,18 +51,17 @@ class VideoSelector:
         data = json.loads(result.stdout)
         return float(data['format']['duration'])
 
-    def get_valid_videos(self, source_dir: Path, min_dur: float, max_dur: float) -> List[Path]:
-        """筛选时长在 [min_dur, max_dur] 区间的视频"""
-        videos = list(source_dir.glob('*.mp4')) + list(source_dir.glob('*.MOV'))
-        valid = []
-        for video in videos:
-            try:
-                dur = self.get_video_duration(video)
-                if min_dur <= dur <= max_dur:
-                    valid.append(video)
-            except Exception:
-                continue
-        return valid
+    def _get_or_create_pool(self, source_dir: Path, min_dur: float, max_dur: float) -> VideoPool:
+        """获取或创建指定目录的视频池"""
+        dir_key = str(source_dir.resolve())
+        if dir_key not in self.pools:
+            short_vids, valid_vids, long_vids = self.get_all_videos(source_dir, min_dur, max_dur)
+            usable_videos = valid_vids + long_vids
+            if usable_videos:
+                self.pools[dir_key] = VideoPool(usable_videos)
+            else:
+                self.pools[dir_key] = VideoPool([])
+        return self.pools[dir_key]
 
     def get_all_videos(self, source_dir: Path, min_dur: float, max_dur: float) -> tuple:
         """获取所有视频，按时长分类
@@ -61,13 +86,12 @@ class VideoSelector:
                 continue
         return short_videos, valid_videos, long_videos
 
-    def make_video_fit_duration(self, video: Path, target_dur: float, used_videos: set) -> Dict[str, Any]:
+    def make_video_fit_duration(self, video: Path, target_dur: float) -> Dict[str, Any]:
         """使视频符合目标时长，随机选择策略：
 
         Args:
             video: 视频路径
             target_dur: 目标时长
-            used_videos: 已使用视频集合
 
         Returns:
             Dict: {'path': video, 'start': start_time, 'duration': duration, 'speed': speed}
@@ -98,12 +122,11 @@ class VideoSelector:
                 'speed': round(speed, 2)
             }
 
-    def build_segment(self, clip_config: Dict[str, Any], used_videos: set) -> List[Dict[str, Any]]:
-        """为一个段落（A/B/C）挑选足够的视频片段
+    def build_segment(self, clip_config: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """为一个段落挑选足够的视频片段
 
         Args:
             clip_config: 段落配置
-            used_videos: 当前已使用的视频集合（跨段落共享）
         """
         source_dir = Path(clip_config['source_dir'])
         min_dur = clip_config.get('min_duration', 3)
@@ -114,12 +137,8 @@ class VideoSelector:
             print(f"⚠️  警告: 素材目录不存在: {source_dir}")
             return []
 
-        short_vids, valid_vids, long_vids = self.get_all_videos(source_dir, min_dur, max_dur)
-
-        # 合并有效视频和长视频（长视频通过裁剪/变速处理后可使用）
-        usable_videos = valid_vids + long_vids
-
-        if not usable_videos:
+        pool = self._get_or_create_pool(source_dir, min_dur, max_dur)
+        if len(pool) == 0:
             print(f"⚠️  警告: 目录 '{source_dir}' 中没有可用视频（时长不足 {min_dur} 秒的视频已舍弃）")
             return []
 
@@ -127,35 +146,28 @@ class VideoSelector:
         accumulated = 0.0
 
         while accumulated < target_duration:
-            # Filter out videos that have already been used in this batch
-            available = [v for v in usable_videos if v not in used_videos]
-            if not available:
-                print(f"⚠️  警告: 目录 '{source_dir}' 中可用视频不足（所有视频已在当前批次中使用）")
+            video = pool.get_next()
+            if video is None:
+                print(f"⚠️  警告: 目录 '{source_dir}' 中可用视频不足")
                 break
-
-            video = random.choice(available)
             dur = self.get_video_duration(video)
 
             remaining = target_duration - accumulated
-            # Skip if remaining duration is too small (floating point precision issue)
             if remaining < 0.05:
                 break
 
             if dur > remaining:
                 # 从剩余部分裁剪
                 clips.append({'path': video, 'start': 0, 'duration': round(remaining, 3), 'speed': 1.0})
-                used_videos.add(video)
                 accumulated = target_duration
             elif min_dur <= dur <= max_dur:
                 # 时长符合要求，直接使用
                 clips.append({'path': video, 'start': 0, 'duration': round(dur, 3), 'speed': 1.0})
-                used_videos.add(video)
                 accumulated += dur
             else:
                 # dur > max_dur，通过裁剪或变速处理
-                clip_info = self.make_video_fit_duration(video, remaining if remaining < dur else dur, used_videos)
+                clip_info = self.make_video_fit_duration(video, remaining if remaining < dur else dur)
                 clips.append(clip_info)
-                used_videos.add(video)
                 accumulated += clip_info['duration']
 
         return clips
@@ -164,10 +176,11 @@ class VideoSelector:
         """构建所有段落（A、B、C）并拼接"""
         all_clips = []
         global_start = 0.0
-        used_videos = set()  # Track used videos across all segments in this batch
+        # 重置视频池，保证批次间独立
+        self.pools = {}
 
         for clip_config in self.config['clips']:
-            segment_clips = self.build_segment(clip_config, used_videos)
+            segment_clips = self.build_segment(clip_config)
             target_duration = clip_config.get('end', 0) - clip_config.get('start', 0)
 
             # 计算该段落在全局时间线上的起始位置
