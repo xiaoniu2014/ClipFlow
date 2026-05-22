@@ -97,7 +97,11 @@ class VideoSelector:
             Dict: {'path': video, 'start': start_time, 'duration': duration, 'speed': speed}
         """
         dur = self.get_video_duration(video)
-        strategy = random.choice(['cut', 'speed'])
+        # 如果目标时长过短（<0.5秒），强制使用变速策略，避免产生过短片段
+        if target_dur < 0.5:
+            strategy = 'speed'
+        else:
+            strategy = random.choice(['cut', 'speed'])
 
         if strategy == 'cut':
             # 策略1：随机裁剪片段
@@ -153,10 +157,16 @@ class VideoSelector:
             dur = self.get_video_duration(video)
 
             remaining = target_duration - accumulated
-            if remaining < 0.05:
+            if remaining < 0.5:
                 break
 
-            if dur > remaining:
+            # 如果剩余时长过短（<0.5秒），不再裁剪短片段，而是通过变速处理
+            if remaining < 0.5 and dur > remaining:
+                # 将该视频通过变速处理来填补剩余（不放慢所有片段，只放慢这一个）
+                clip_info = self.make_video_fit_duration(video, remaining)
+                clips.append(clip_info)
+                accumulated += clip_info['duration']
+            elif dur > remaining:
                 # 从剩余部分裁剪
                 clips.append({'path': video, 'start': 0, 'duration': round(remaining, 3), 'speed': 1.0})
                 accumulated = target_duration
@@ -169,6 +179,17 @@ class VideoSelector:
                 clip_info = self.make_video_fit_duration(video, remaining if remaining < dur else dur)
                 clips.append(clip_info)
                 accumulated += clip_info['duration']
+
+        # 如果剩余时长 < 0.5 秒，对前面所有片段做变速处理，避免产生过短片段
+        if accumulated < target_duration:
+            remaining = target_duration - accumulated
+            if remaining < 0.5 and clips:
+                # 内容总时长 < 目标时长，需放慢速度（speed < 1）
+                speed_factor = accumulated / target_duration
+                for clip in clips:
+                    current_speed = clip.get('speed', 1.0)
+                    clip['speed'] = round(current_speed * speed_factor, 2)
+                accumulated = target_duration
 
         return clips
 
@@ -187,7 +208,8 @@ class VideoSelector:
             segment_start = global_start
 
             for clip in segment_clips:
-                clip['start'] = segment_start
+                clip['clip_start'] = clip.get('start', 0)  # 保留视频内截取起始位置
+                clip['start'] = segment_start  # 全局时间线起始位置
                 clip['end'] = segment_start + clip['duration']
                 all_clips.append(clip)
                 segment_start += clip['duration']
