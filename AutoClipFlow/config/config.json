@@ -104,7 +104,7 @@
     "duration": 43.2,
     "filename": "output/final.mp4",
     "batch_prefix": "batch_",
-    "batch_count": 35
+    "batch_count": 5
   },
   "filters": {
     "scale": "1080:1920",
