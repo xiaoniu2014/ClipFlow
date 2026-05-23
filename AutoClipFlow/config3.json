@@ -17,94 +17,95 @@
   "clips": [
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/1安装纱窗",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 0.0,
       "end": 6.5
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/2展示磁条吸附效果",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 6.5,
       "end": 10.467
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/展示磁条",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 10.467,
       "end": 12.333
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/撕背胶磁条",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 12.333,
       "end": 14.1
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/贴磁条",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 14.1,
       "end": 16.6
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/磁条吸住杂物",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 16.6,
       "end": 19.2
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/4水冲不掉",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 19.2,
       "end": 21.3
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/展示防风卡扣",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 21.3,
       "end": 23.133
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/6吸力强劲",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 23.133,
       "end": 25.0
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/3网孔细密蚊虫飞不进来",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 25.0,
       "end": 32.233
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/5开关窗方便",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 32.233,
       "end": 38.933
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/1安装纱窗",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 38.933,
       "end": 43.2
     }
   ],
   "output": {
+    "output_dir": "output/脚本3",
+    "filename": "final",
     "duration": 43.2,
-    "filename": "output/final.mp4",
     "batch_prefix": "batch_",
-    "batch_count": 5
+    "batch_count": 40
   },
   "filters": {
     "scale": "1080:1920",

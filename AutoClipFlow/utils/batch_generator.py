@@ -30,9 +30,10 @@ class BatchGenerator:
 
     def _write_log(self, video_path: Path, segments: List[Dict[str, Any]]):
         """写入素材使用日志"""
-        output_dir = Path(self.config['output']['filename']).parent / 'log'
-        output_dir.mkdir(parents=True, exist_ok=True)
-        log_path = output_dir / f"{video_path.stem}.log"
+        output_dir = self.config['output'].get('output_dir', 'output')
+        log_dir = Path(output_dir) / 'log'
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / f"{video_path.stem}.log"
         with open(log_path, 'w', encoding='utf-8') as f:
             f.write(f"视频: {video_path.name}\n")
             f.write(f"生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
@@ -42,10 +43,11 @@ class BatchGenerator:
                 f.write(f"  {i}. {clip_path.name} - 时长: {seg['duration']:.2f}秒\n")
 
     def _get_batch_output_path(self, batch_id: int) -> Path:
+        output_dir = self.config['output'].get('output_dir', 'output')
         prefix = self.config['output'].get('batch_prefix', 'batch_')
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         filename = f"{prefix}{batch_id}_{timestamp}.mp4"
-        return Path(self.config['output']['filename']).parent / filename
+        return Path(output_dir) / filename
 
     def run(self) -> List[Path]:
         count = self.config['output'].get('batch_count', 1)

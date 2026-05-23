@@ -13,7 +13,9 @@ class FFmpegBuilder:
         self.config = config
         self.segments = segments
         self.speed_factor = config['speed']['factor']
-        self.output_path = Path(config['output']['filename'])
+        output_dir = config['output'].get('output_dir', 'output')
+        output_filename = config['output'].get('filename', 'final')
+        self.output_path = Path(output_dir) / f"{output_filename}.mp4"
 
     def build(self) -> 'FFmpegBuilder':
         if not self.output_path.parent.exists():

@@ -17,28 +17,28 @@
   "clips": [
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/1安装纱窗",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 0.0,
       "end": 2.7
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/2展示磁条吸附效果",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 2.7,
       "end": 3.933
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/展示磁条",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 3.933,
       "end": 5.4
     },
     {
       "source_dir": "/Users/hongw/Downloads/哼哼猫/磁吸纱窗/素材拆分/6吸力强劲",
-      "min_duration": 0,
+      "min_duration": 0.4,
       "max_duration": 2,
       "start": 5.4,
       "end": 6.833
@@ -108,10 +108,11 @@
     }
   ],
   "output": {
+    "output_dir": "output/脚本2",
+    "filename": "final",
     "duration": 21.467,
-    "filename": "output/final.mp4",
     "batch_prefix": "batch_",
-    "batch_count": 5
+    "batch_count": 40
   },
   "filters": {
     "scale": "1080:1920",

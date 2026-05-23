@@ -101,10 +101,11 @@
     }
   ],
   "output": {
+    "output_dir": "output/脚本3",
+    "filename": "final",
     "duration": 43.2,
-    "filename": "output/final.mp4",
     "batch_prefix": "batch_",
-    "batch_count": 10
+    "batch_count": 40
   },
   "filters": {
     "scale": "1080:1920",
